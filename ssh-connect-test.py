@@ -2,10 +2,11 @@ import pymysql
 import time
 import sys
 from sys import argv
-import SSHLibrary
 import json
+from scp import SCPClient
+import paramiko
 
-print "system   timestamp:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+print "current system timestamp:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 filename = "ssh-connect-test.args.json"
 if len(argv) > 2:
@@ -17,6 +18,7 @@ if len(argv) > 2:
 if len(argv) > 1:
     filename = argv[1]
 
+# checkout arguments file
 args = []
 file_object = open(filename)
 try:
@@ -39,6 +41,11 @@ _passwd=""#not null
 _db=""#not null
 _charset="utf8"
 
+# upload file name
+_dir_name = "py-mysql-test"
+_test_file_name = "connect-test.py"
+_pymysql_dir_name = "pymysql"
+
 # loop each ssh server
 for arg in args:
     if len(arg) < 4:
@@ -46,13 +53,26 @@ for arg in args:
 
     thissshstr = "".join(("[", arg['host'], ":", str(arg['port']), "]"))
     # ssh logn 
-    rlogin = SSHLibrary.SSHLibrary()
-    rlogin.open_connection(host=arg['host'], port=arg['port'])
+    ssh = paramiko.SSHClient()
+    ssh.load_system_host_keys()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(arg['host'],arg['port'],arg['username'],arg['password'],timeout=5)
+
+    # TODO:test python version
+    stdin, stdout, stderr = ssh.exec_command('python -V')
+    print thissshstr, ''.join(stdout.readlines()), ''.join(stderr.readlines())
+
+    # SCPCLient takes a paramiko transport as its only argument
+    scp = SCPClient(ssh.get_transport())
+
+    # upload files
     try:
-        rlogin.login(username=arg['username'], password=arg['password'])
-    except RuntimeError, re:
-        print thissshstr, "login fail: ", re.args
-        continue
+        ssh.exec_command('mkdir -p ' + _dir_name)
+        scp.put(_test_file_name, _dir_name)
+        scp.put(_pymysql_dir_name, _dir_name, True)
+    finally:
+        scp.close()
+        pass
 
     # loop each database
     for dbarg in arg['db']:
@@ -68,27 +88,8 @@ for arg in args:
         if dbarg.has_key('charset'):
             charset = dbarg['charset']
 
-        thisdbstr = "".join((thissshstr, "[", host, ":", str(port), "]"))
+        db_test_params = ' '.join((host, str(port), user, passwd, db, charset))
+        db_test_command = ''.join(('cd ', _dir_name, ' && python ', _test_file_name, ' ', db_test_params))
+        stdin, stdout, stderr = ssh.exec_command(db_test_command)
 
-        # try connect and select
-        result=[]
-        try:
-            conn=pymysql.connect(host=host, port=port, user=user, passwd=passwd,db=db, charset=charset)
-            cur=conn.cursor()
-            cur.execute("SELECT NOW(), UNIX_TIMESTAMP()")
-            cur.close()
-            conn.close()
-
-            result=cur.fetchall()
-        except pymysql.err.OperationalError, oe:
-            print thisdbstr, "test fail: ", oe.args
-            continue
-
-        print thisdbstr, "database timestamp:", result[0][0]
-        #
-        #print "test ok" if int(time.time()) - result[0][0] < 60 else "test fail"
-        #python 2.4
-        if int(time.time()) - result[0][1] < 60:
-            print thisdbstr, "test ok"
-        else:
-            thisdbstr, "test fail"
+        print thissshstr, ''.join(stdout.readlines()), ''.join(stderr.readlines())

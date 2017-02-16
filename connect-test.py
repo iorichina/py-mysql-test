@@ -3,7 +3,7 @@ import time
 import sys
 from sys import argv
 
-print "system   timestamp:", int(time.time())
+print "system timestamp:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 if len(argv) < 6 or len(argv) > 7:
     print "usage: "
@@ -29,24 +29,26 @@ if len(argv) > 5:
     if len(argv) > 6:
         charset=argv[6]
 
+thisdbstr = "".join(("[", host, ":", str(port), "]"))
+
 result=[]
 try:
     conn=pymysql.connect(host=host, port=port, user=user, passwd=passwd,db=db, charset=charset)
     cur=conn.cursor()
-    cur.execute("SELECT UNIX_TIMESTAMP()")
+    cur.execute("SELECT UNIX_TIMESTAMP(), NOW()")
     cur.close()
     conn.close()
 
     result=cur.fetchall()
 except pymysql.err.OperationalError, oe:
-    print "test fail: ", oe.args
+    print thisdbstr, "test fail: ", oe.args
     sys.exit()
 
-print "database timestamp:", result[0][0]
+print thisdbstr, "database timestamp:", result[0][1]
 #
 #print "test ok" if int(time.time()) - result[0][0] < 60 else "test fail"
 #python 2.4
 if int(time.time()) - result[0][0] < 60:
-    print "test ok"
+    print thisdbstr, "test ok"
 else:
-    "test fail"
+    print thisdbstr, "test fail"

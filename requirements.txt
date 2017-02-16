@@ -1,2 +1,3 @@
 PyMySQL==0.7.9
-robotframework-sshlibrary==2.1.2
+paramiko==2.0.2
+pycrypto==2.6.1
