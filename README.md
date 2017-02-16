@@ -4,7 +4,7 @@ python scripts for testing mysql.
 ## installation
 ```pip install -r requirements.txt --root ./ -I```
 
-and/or copy the libs in requirements.txt into this project root directory.
+and/or copy the lib `pymysql` into this project root directory.
 
 or just use branch full_version_with_libs.
 
