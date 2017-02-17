@@ -11,7 +11,7 @@ print "current system timestamp:", time.strftime("%Y-%m-%d %H:%M:%S", time.local
 filename = "ssh-connect-test.args.json"
 if len(argv) > 2:
     print "usage: "
-    print "]$ python ssh-connect-test.py [filename(default 'ssh-connect-test.args.json')]"
+    print "]$ python ssh-connect-test.py [filename(default 'args.ssh-connect-test.json')]"
     print "]$ python ssh-connect-test.py test-args.json"
     sys.exit()
 
