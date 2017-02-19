@@ -2,7 +2,7 @@
 python scripts for testing mysql.
 
 ## installation
-```pip install -r requirements.txt --root ./ -I```
+```python -m pip install -r requirements.txt --prefix . -I```
 
 and/or copy the lib `pymysql` into this project root directory.
 

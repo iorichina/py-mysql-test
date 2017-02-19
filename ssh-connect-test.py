@@ -1,6 +1,17 @@
-import pymysql
-import time
 import sys
+import os
+
+libpath=os.path.join('lib','site-packages')
+if os.path.exists(libpath):
+    sys.path.append(libpath)
+else:
+    libpath=os.path.join('lib','python2.6','site-packages')
+    if os.path.exists(libpath):
+        sys.path.append(libpath)
+    else:
+        libpath='.'
+
+import time
 from sys import argv
 import json
 from scp import SCPClient
@@ -8,13 +19,14 @@ import paramiko
 
 print "current system timestamp:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-filename = "ssh-connect-test.args.json"
+defaultfilename = "args.ssh-connect-test.json"
 if len(argv) > 2:
     print "usage: "
-    print "]$ python ssh-connect-test.py [filename(default 'ssh-connect-test.args.json')]"
+    print "]$ python ssh-connect-test.py [filename(default '",defaultfilename,"')]"
     print "]$ python ssh-connect-test.py test-args.json"
     sys.exit()
 
+filename=defaultfilename
 if len(argv) > 1:
     filename = argv[1]
 
@@ -67,9 +79,16 @@ for arg in args:
 
     # upload files
     try:
+        print 'doing upload'
         ssh.exec_command('mkdir -p ' + _dir_name)
+        # TODO test dest file exists
         scp.put(_test_file_name, _dir_name)
-        scp.put(_pymysql_dir_name, _dir_name, True)
+        if os.path.exists(_pymysql_dir_name):
+            scp.put(_pymysql_dir_name, _dir_name, True)
+        elif os.path.exists(os.path.join(libpath, _pymysql_dir_name)):
+            scp.put(os.path.join(libpath, _pymysql_dir_name), _dir_name, True)
+        else:
+            print thissshstr, 'upload FAIL'
     finally:
         scp.close()
         pass

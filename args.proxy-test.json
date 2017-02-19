@@ -1,0 +1,14 @@
+[{
+    "host": "10.16.6.90",
+    "port": 32200,
+    "username": "www",
+    "password": "www",
+    "db": [{
+        "host": "10.16.6.50",
+        "port": 3307,
+        "user": "fanxing",
+        "passwd": "kugou2014",
+        "db": "fx_soa_star_core",
+        "charset": "utf8mb4"
+    }]
+}]
