@@ -26,7 +26,7 @@ test whether the ssh logined systems could create a connection.
 
 usage:
 
-```python ssh-connect-test.py [filename(default 'ssh-connect-test.args.json')]```
+```python ssh-connect-test.py [filename(default 'args.ssh-connect-test.json')]```
 
 ```python ssh-connect-test.py test-args.json```
 
