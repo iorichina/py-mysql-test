@@ -74,18 +74,22 @@ for dbarg in args:
         charset = dbarg['charset']
 
     # thisdbstr = "".join(tuple(dbarg))
-    thisdbstr = "[{}:{}]".format(host, port)
+    thisdbstr = "[{0}:{1}]".format(host, port)
     print "testing:", thisdbstr
 
     result=[]
     try:
         conn=pymysql.connect(host=host, port=port, user=user, passwd=passwd, db=db, charset=charset)
-        cur=conn.cursor()
-        cur.execute("SELECT UNIX_TIMESTAMP(), NOW()")
-        cur.close()
-        conn.close()
-
-        result=cur.fetchall()
+        try:
+            cur=conn.cursor()
+            cur.execute("SELECT UNIX_TIMESTAMP(), NOW()")
+            cur.close()
+            result=cur.fetchall()
+        except Exception, e:
+            print thisdbstr, "test fail: ", e.args
+            continue
+        finally:
+            conn.close()
     except pymysql.err.OperationalError, oe:
         print thisdbstr, "test fail: ", oe.args
         continue
