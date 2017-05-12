@@ -1,0 +1,14 @@
+[{
+    "host": "127.0.0.1",
+    "port": 3306,
+    "user": "aaa",
+    "passwd": "bbb",
+    "db": "ccc",
+    "charset": "utf8mb4"
+}, {
+    "host": "127.0.0.1",
+    "port": 3307,
+    "user": "aaa",
+    "passwd": "bbb",
+    "db": "ddd"
+}]
