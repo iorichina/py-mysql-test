@@ -28,7 +28,7 @@ def readjsonfile( filename ):
 
     return args
 
-args = []
+args = [{}]
 _port=3306
 _charset="utf8"
 
