@@ -5,7 +5,7 @@
     "passwd": "bbb",
     "db": "ccc",
     "charset": "utf8mb4",
-    "testsql": "select version();"
+    "testsql": "select version()"
 }, {
     "host": "127.0.0.1",
     "port": 3307,

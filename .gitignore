@@ -95,3 +95,4 @@ ENV/
 *.test
 
 connect-test.args.json.*
+*.zip

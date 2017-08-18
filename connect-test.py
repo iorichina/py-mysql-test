@@ -20,7 +20,7 @@ def readjsonfile( filename ):
     try:
         all_the_text = file_object.read()
         args = json.loads(all_the_text)
-    except json.ValueError, ve:
+    except Exception, ve:
         print "args file has not a valid json content"
         sys.exit()
     finally:
@@ -84,7 +84,7 @@ for dbarg in args:
         testsql = dbarg['testsql']
 
     # thisdbstr = "".join(tuple(dbarg))
-    thisdbstr = "[{0}:{1}]".format(host, port)
+    thisdbstr = "[{2}@{0}:{1}/{3}]".format(host, port, user, db)
     print "testing:", thisdbstr
 
     result=[]
@@ -122,3 +122,4 @@ for dbarg in args:
         print thisdbstr, "test fail"
 
     print thisdbstr, "testsql result:", testsql_result
+    print ""
