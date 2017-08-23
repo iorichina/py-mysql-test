@@ -121,5 +121,6 @@ for dbarg in args:
     else:
         print thisdbstr, "test fail"
 
+    print thisdbstr, "testsql:", testsql
     print thisdbstr, "testsql result:", testsql_result
     print ""
