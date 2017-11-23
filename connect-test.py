@@ -89,7 +89,7 @@ for dbarg in args:
 
     result=[]
     try:
-        conn=pymysql.connect(host=host, port=port, user=user, passwd=passwd, db=db, charset=charset)
+        conn=pymysql.connect(host=host, port=port, user=user, passwd=passwd, db=db, charset=charset, autocommit=True)
         try:
             cur=conn.cursor()
             cur.execute("SELECT UNIX_TIMESTAMP(),NOW()")
